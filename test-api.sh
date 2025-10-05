@@ -19,7 +19,7 @@ MAX_WAIT_TIME=120
 CLEANUP_ON_EXIT=true
 
 echo -e "${BLUE}╔════════════════════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║  ConfigCat Demo - API Test Suite                      ║${NC}"
+echo -e "${BLUE}║  ConfigCat Demo - API Test Suite                       ║${NC}"
 echo -e "${BLUE}╚════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
@@ -51,13 +51,34 @@ if ! docker info > /dev/null 2>&1; then
 fi
 echo -e "${GREEN}✅ Docker is running${NC}\n"
 
-echo -e "${BLUE}📋 Step 2: Starting services with docker-compose...${NC}"
+echo -e "${BLUE}📋 Step 2: Checking for port conflicts...${NC}"
+# Check if port 8080 is in use
+PORT_IN_USE=$(lsof -ti:8080 2>/dev/null || true)
+if [ -n "$PORT_IN_USE" ]; then
+    echo -e "${YELLOW}⚠️  Port 8080 is in use by process(es): $PORT_IN_USE${NC}"
+    echo -e "${YELLOW}Attempting to stop conflicting processes...${NC}"
+
+    # Check if it's a Gradle bootRun process
+    if ps -p $PORT_IN_USE | grep -q gradle; then
+        echo -e "${YELLOW}Found Gradle bootRun process, stopping it...${NC}"
+        kill $PORT_IN_USE 2>/dev/null || true
+        sleep 2
+    else
+        echo -e "${RED}❌ Port 8080 is in use by another process.${NC}"
+        echo -e "${YELLOW}Please stop the process manually:${NC}"
+        lsof -i:8080
+        exit 1
+    fi
+fi
+echo -e "${GREEN}✅ Port 8080 is available${NC}\n"
+
+echo -e "${BLUE}📋 Step 3: Starting services with docker-compose...${NC}"
 docker-compose down -v 2>/dev/null || true
 docker-compose up -d --build
 
 echo -e "${GREEN}✅ Services started${NC}\n"
 
-echo -e "${BLUE}📋 Step 3: Waiting for application to be healthy...${NC}"
+echo -e "${BLUE}📋 Step 4: Waiting for application to be healthy...${NC}"
 ELAPSED=0
 HEALTHY=false
 
