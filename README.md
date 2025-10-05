@@ -96,12 +96,53 @@ Run the automated test suite:
 ./test-api.sh
 ```
 
-This script will test all endpoints and verify:
-- ✅ Health checks
-- ✅ User Management API
-- ✅ Payment Processing API
-- ✅ OpenAPI documentation
-- ✅ Swagger UI
+This script will:
+- ✅ Check prerequisites (.env file and Docker status)
+- ✅ Detect and resolve port conflicts automatically
+- ✅ Start all services (application, Prometheus, Grafana)
+- ✅ Wait for application health check
+- ✅ Run 12 comprehensive API tests
+- ✅ Display test results summary
+- ✅ **Ask what you want to do next** (new interactive menu!)
+
+#### Interactive Cleanup Menu
+
+After all tests complete, you'll be presented with three options:
+
+```
+╔════════════════════════════════════════════════════════╗
+║  Cleanup Options                                       ║
+╚════════════════════════════════════════════════════════╝
+
+What would you like to do?
+
+  1) Clean up NOW - Stop all services and reclaim Docker resources
+  2) Keep services RUNNING - I want to check logs/application first
+  3) Exit WITHOUT cleanup - Leave everything as is
+
+Enter your choice [1-3] (default: 2):
+```
+
+**Option 1 - Clean up NOW:**
+- Immediately stops all containers
+- Removes all volumes, images, and build cache
+- Reclaims all Docker resources
+- Perfect for CI/CD pipelines
+
+**Option 2 - Keep services RUNNING (default):**
+- Leaves all services running for inspection
+- Shows URLs for accessing services
+- Provides manual cleanup commands
+- Great for debugging and exploring the application
+
+**Option 3 - Exit WITHOUT cleanup:**
+- Exits the script completely
+- All services remain running
+- No cleanup performed
+- Useful when running multiple test iterations
+
+**Non-Interactive Mode:**
+The script automatically detects CI/CD environments and defaults to "Clean up NOW" when running in non-interactive mode.
 
 ## API Documentation
 
