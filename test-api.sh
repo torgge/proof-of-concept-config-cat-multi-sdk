@@ -26,9 +26,29 @@ echo ""
 # Function to cleanup on exit
 cleanup() {
     if [ "$CLEANUP_ON_EXIT" = true ]; then
-        echo -e "\n${YELLOW}🧹 Cleaning up...${NC}"
-        docker-compose down
-        echo -e "${GREEN}✅ Cleanup completed${NC}"
+        echo -e "\n${YELLOW}🧹 Cleaning up Docker resources...${NC}"
+
+        # Stop and remove containers, networks, and volumes
+        echo -e "${YELLOW}  → Stopping and removing containers...${NC}"
+        docker-compose down -v
+
+        # Remove dangling volumes
+        echo -e "${YELLOW}  → Removing unused volumes...${NC}"
+        docker volume prune -f 2>/dev/null || true
+
+        # Remove dangling images
+        echo -e "${YELLOW}  → Removing dangling images...${NC}"
+        docker image prune -f 2>/dev/null || true
+
+        # Remove project-specific images
+        echo -e "${YELLOW}  → Removing project images...${NC}"
+        docker rmi spring-boot-config-cat-configcat-demo 2>/dev/null || true
+
+        # Clean build cache (optional, keeps future builds faster)
+        echo -e "${YELLOW}  → Removing build cache...${NC}"
+        docker builder prune -f 2>/dev/null || true
+
+        echo -e "${GREEN}✅ Cleanup completed - All Docker resources reclaimed${NC}"
     fi
 }
 
