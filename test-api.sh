@@ -251,7 +251,6 @@ if [ $FAILED -gt 0 ]; then
 
     echo -e "\n${YELLOW}📋 Check application logs for details:${NC}"
     echo -e "  docker-compose logs configcat-demo"
-    exit 1
 else
     echo ""
     echo -e "${GREEN}╔════════════════════════════════════════════════════════╗${NC}"
@@ -260,12 +259,100 @@ else
 fi
 
 echo ""
-echo -e "${BLUE}🌐 Services Running:${NC}"
+echo -e "${BLUE}🌐 Services Currently Running:${NC}"
 echo -e "  Application:  ${BASE_URL}"
 echo -e "  Swagger UI:   ${BASE_URL}/swagger-ui.html"
 echo -e "  Prometheus:   http://localhost:9090"
 echo -e "  Grafana:      http://localhost:3000 (admin/admin)"
 echo ""
-echo -e "${YELLOW}💡 To view logs: docker-compose logs -f configcat-demo${NC}"
-echo -e "${YELLOW}💡 To stop services: docker-compose down${NC}"
+echo -e "${YELLOW}💡 Useful commands:${NC}"
+echo -e "  View logs:         docker-compose logs -f configcat-demo"
+echo -e "  Follow all logs:   docker-compose logs -f"
+echo -e "  Stop services:     docker-compose down"
 echo ""
+
+# Ask user for cleanup decision
+echo -e "${BLUE}╔════════════════════════════════════════════════════════╗${NC}"
+echo -e "${BLUE}║  Cleanup Options                                       ║${NC}"
+echo -e "${BLUE}╚════════════════════════════════════════════════════════╝${NC}"
+echo ""
+echo -e "${YELLOW}What would you like to do?${NC}"
+echo ""
+echo -e "  ${GREEN}1)${NC} Clean up NOW - Stop all services and reclaim Docker resources"
+echo -e "  ${BLUE}2)${NC} Keep services RUNNING - I want to check logs/application first"
+echo -e "  ${RED}3)${NC} Exit WITHOUT cleanup - Leave everything as is"
+echo ""
+
+# Set default behavior for non-interactive environments (CI/CD)
+if [ ! -t 0 ]; then
+    echo -e "${YELLOW}Non-interactive mode detected. Using default: Clean up now${NC}"
+    CLEANUP_CHOICE="1"
+else
+    read -p "Enter your choice [1-3] (default: 2): " CLEANUP_CHOICE
+    CLEANUP_CHOICE=${CLEANUP_CHOICE:-2}
+fi
+
+case $CLEANUP_CHOICE in
+    1)
+        echo ""
+        echo -e "${YELLOW}🧹 Starting cleanup process...${NC}"
+        CLEANUP_ON_EXIT=true
+        ;;
+    2)
+        echo ""
+        echo -e "${BLUE}📋 Services will remain running for inspection${NC}"
+        echo ""
+        echo -e "${YELLOW}When you're done, run these commands to clean up:${NC}"
+        echo -e "  ${GREEN}cd /Users/gbonespirito/Development/spring-boot-config-cat${NC}"
+        echo -e "  ${GREEN}docker-compose down -v${NC}"
+        echo -e "  ${GREEN}docker volume prune -f${NC}"
+        echo -e "  ${GREEN}docker image prune -f${NC}"
+        echo -e "  ${GREEN}docker rmi spring-boot-config-cat-configcat-demo${NC}"
+        echo -e "  ${GREEN}docker builder prune -f${NC}"
+        echo ""
+        echo -e "${BLUE}Or run this one-liner:${NC}"
+        echo -e "  ${GREEN}docker-compose down -v && docker volume prune -f && docker image prune -f && docker rmi spring-boot-config-cat-configcat-demo 2>/dev/null && docker builder prune -f${NC}"
+        echo ""
+        CLEANUP_ON_EXIT=false
+
+        # Exit successfully without cleanup
+        if [ $FAILED -gt 0 ]; then
+            exit 1
+        else
+            exit 0
+        fi
+        ;;
+    3)
+        echo ""
+        echo -e "${YELLOW}⚠️  Exiting without cleanup - All services remain running${NC}"
+        echo -e "${YELLOW}Docker resources will NOT be reclaimed${NC}"
+        CLEANUP_ON_EXIT=false
+
+        # Exit successfully without cleanup
+        if [ $FAILED -gt 0 ]; then
+            exit 1
+        else
+            exit 0
+        fi
+        ;;
+    *)
+        echo ""
+        echo -e "${RED}Invalid choice. Defaulting to option 2 (Keep services running)${NC}"
+        CLEANUP_ON_EXIT=false
+
+        # Exit successfully without cleanup
+        if [ $FAILED -gt 0 ]; then
+            exit 1
+        else
+            exit 0
+        fi
+        ;;
+esac
+
+# If we get here, user chose cleanup (option 1)
+# The cleanup function will be called automatically via trap EXIT
+if [ $FAILED -gt 0 ]; then
+    exit 1
+else
+    exit 0
+fi
