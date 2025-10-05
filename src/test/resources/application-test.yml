@@ -2,15 +2,14 @@ spring:
   application:
     name: configcat-demo-test
 
-# Test configuration with mock SDK keys
 configcat:
-  log-level: INFO
+  log-level: DEBUG
   user-management:
-    sdk-key: "test-user-management-key"
-    poll-interval-seconds: 1
+    sdk-key: ${CONFIGCAT_USER_MANAGEMENT_SDK_KEY_LOCAL:configcat-sdk-1/9gPeCHC2w0-Kjegr_dwvmQ/Cl_ld6JRLk6Ev-wW1S8KDg}
+    poll-interval-seconds: 10
   payment:
-    sdk-key: "test-payment-key"
-    poll-interval-seconds: 1
+    sdk-key: ${CONFIGCAT_PAYMENT_SDK_KEY_LOCAL:configcat-sdk-1/9gPeCHC2w0-Kjegr_dwvmQ/-X7xzRL9oEuM2PdC4bq0VQ}
+    poll-interval-seconds: 10
 
 # Minimal logging for tests
 logging:

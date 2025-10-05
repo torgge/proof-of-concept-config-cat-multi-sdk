@@ -18,6 +18,31 @@ repositories {
     mavenCentral()
 }
 
+// Function to load .env file
+fun loadEnvFile(): Map<String, String> {
+    val envFile = file(".env")
+    val envVars = mutableMapOf<String, String>()
+
+    if (envFile.exists()) {
+        envFile.readLines().forEach { line ->
+            val trimmedLine = line.trim()
+            // Skip empty lines and comments
+            if (trimmedLine.isNotEmpty() && !trimmedLine.startsWith("#")) {
+                val parts = trimmedLine.split("=", limit = 2)
+                if (parts.size == 2) {
+                    val key = parts[0].trim()
+                    val value = parts[1].trim()
+                    envVars[key] = value
+                }
+            }
+        }
+    } else {
+        println("Warning: .env file not found at ${envFile.absolutePath}")
+    }
+
+    return envVars
+}
+
 dependencies {
     // Spring Boot
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -60,6 +85,20 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs += "-Xjsr305=strict"
         jvmTarget = "21"
+    }
+}
+
+// Configure bootRun to load environment variables from .env file
+tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
+    val envVars = loadEnvFile()
+    environment(envVars)
+
+    // Log loaded environment variables (excluding sensitive values)
+    doFirst {
+        println("Loading environment variables from .env file:")
+        envVars.keys.sorted().forEach { key ->
+            println("  - $key")
+        }
     }
 }
 
