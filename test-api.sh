@@ -136,7 +136,7 @@ run_test "Prometheus Metrics Endpoint" \
 
 # Test 3: OpenAPI Documentation
 run_test "OpenAPI JSON Documentation" \
-    "curl -f -s ${BASE_URL}/api-docs | grep -q '\"openapi\":\"3'"
+    "curl -f -s ${BASE_URL}/v3/api-docs | grep -q '\"openapi\":\"3'"
 
 # Test 4: Swagger UI
 run_test "Swagger UI Accessibility" \
