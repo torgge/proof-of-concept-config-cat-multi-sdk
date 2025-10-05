@@ -52,6 +52,9 @@ fi
 echo -e "${GREEN}✅ Docker is running${NC}\n"
 
 echo -e "${BLUE}📋 Step 2: Checking for port conflicts...${NC}"
+# First, stop any existing docker-compose services
+docker-compose down -v 2>/dev/null || true
+
 # Check if port 8080 is in use
 PORT_IN_USE=$(lsof -ti:8080 2>/dev/null || true)
 if [ -n "$PORT_IN_USE" ]; then
@@ -62,11 +65,23 @@ if [ -n "$PORT_IN_USE" ]; then
     if ps -p $PORT_IN_USE | grep -q gradle; then
         echo -e "${YELLOW}Found Gradle bootRun process, stopping it...${NC}"
         kill $PORT_IN_USE 2>/dev/null || true
-        sleep 2
+        sleep 3
+    # Check if it's a Docker container
+    elif ps -p $PORT_IN_USE | grep -q docker; then
+        echo -e "${YELLOW}Found Docker process using port, stopping all containers...${NC}"
+        docker stop $(docker ps -q) 2>/dev/null || true
+        sleep 3
     else
         echo -e "${RED}❌ Port 8080 is in use by another process.${NC}"
         echo -e "${YELLOW}Please stop the process manually:${NC}"
         lsof -i:8080
+        exit 1
+    fi
+
+    # Verify port is now free
+    PORT_STILL_IN_USE=$(lsof -ti:8080 2>/dev/null || true)
+    if [ -n "$PORT_STILL_IN_USE" ]; then
+        echo -e "${RED}❌ Failed to free port 8080${NC}"
         exit 1
     fi
 fi
