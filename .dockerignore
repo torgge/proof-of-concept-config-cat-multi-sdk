@@ -1,0 +1,42 @@
+# Build artifacts
+build/
+target/
+*.jar
+*.war
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+README.md
+docs/
+
+# Tests
+**/test/
+**/*Test.kt
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Local configs
+.env
+docker-compose.override.yml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/

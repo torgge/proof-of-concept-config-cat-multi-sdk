@@ -1,0 +1,36 @@
+build:
+  maxIssues: 0
+
+config:
+  validation: true
+  warningsAsErrors: false
+
+complexity:
+  active: true
+  LongParameterList:
+    active: true
+    functionThreshold: 6
+    constructorThreshold: 7
+  LongMethod:
+    active: true
+    threshold: 60
+  LargeClass:
+    active: true
+    threshold: 600
+  ComplexMethod:
+    active: true
+    threshold: 15
+
+style:
+  active: true
+  MaxLineLength:
+    active: true
+    maxLineLength: 120
+  MagicNumber:
+    active: false
+
+naming:
+  active: true
+  FunctionNaming:
+    active: true
+    excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**']

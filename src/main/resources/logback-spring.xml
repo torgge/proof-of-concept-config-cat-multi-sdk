@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <!-- Console appender with MDC context -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp/>
+                <logLevel/>
+                <loggerName/>
+                <mdc/>
+                <arguments/>
+                <stackTrace/>
+                <pattern>
+                    <pattern>
+                        {
+                            "timestamp": "%d{yyyy-MM-dd'T'HH:mm:ss.SSSX}",
+                            "level": "%level",
+                            "logger": "%logger{36}",
+                            "thread": "%thread",
+                            "message": "%message",
+                            "correlation_id": "%X{correlationId:-}",
+                            "user_id": "%X{userId:-}",
+                            "session_id": "%X{sessionId:-}",
+                            "request_uri": "%X{requestUri:-}",
+                            "request_method": "%X{requestMethod:-}",
+                            "configcat_project": "%X{configcat.project:-}",
+                            "configcat_flag": "%X{configcat.flag:-}",
+                            "configcat_result": "%X{configcat.result:-}"
+                        }
+                    </pattern>
+                </pattern>
+            </providers>
+        </encoder>
+    </appender>
+
+    <!-- File appender for structured logging -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/configcat-demo.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/configcat-demo.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp/>
+                <logLevel/>
+                <loggerName/>
+                <mdc/>
+                <arguments/>
+                <stackTrace/>
+                <pattern>
+                    <pattern>
+                        {
+                            "timestamp": "%d{yyyy-MM-dd'T'HH:mm:ss.SSSX}",
+                            "level": "%level",
+                            "logger": "%logger{36}",
+                            "thread": "%thread",
+                            "message": "%message",
+                            "correlation_id": "%X{correlationId:-}",
+                            "user_id": "%X{userId:-}",
+                            "session_id": "%X{sessionId:-}",
+                            "request_uri": "%X{requestUri:-}",
+                            "request_method": "%X{requestMethod:-}",
+                            "configcat_project": "%X{configcat.project:-}",
+                            "configcat_flag": "%X{configcat.flag:-}",
+                            "configcat_result": "%X{configcat.result:-}",
+                            "exception": "%exception"
+                        }
+                    </pattern>
+                </pattern>
+            </providers>
+        </encoder>
+    </appender>
+
+    <!-- Async appender for better performance -->
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="FILE"/>
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>true</includeCallerData>
+    </appender>
+
+    <!-- Profile-specific configuration -->
+    <springProfile name="local,development">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+        
+        <logger name="com.example.configcat" level="DEBUG"/>
+        <logger name="com.configcat" level="DEBUG"/>
+    </springProfile>
+
+    <springProfile name="production">
+        <root level="INFO">
+            <appender-ref ref="ASYNC"/>
+        </root>
+        
+        <logger name="com.example.configcat" level="INFO"/>
+        <logger name="com.configcat" level="WARN"/>
+    </springProfile>
+</configuration>

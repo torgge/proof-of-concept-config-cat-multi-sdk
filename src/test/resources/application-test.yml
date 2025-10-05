@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: configcat-demo-test
+
+# Test configuration with mock SDK keys
+configcat:
+  log-level: INFO
+  user-management:
+    sdk-key: "test-user-management-key"
+    poll-interval-seconds: 1
+  payment:
+    sdk-key: "test-payment-key"
+    poll-interval-seconds: 1
+
+# Minimal logging for tests
+logging:
+  level:
+    com.example.configcat: WARN
+    com.configcat: WARN
+    root: WARN
