@@ -11,14 +11,9 @@ services:
     ports:
       - "8080:8080"
       - "5005:5005" # Debug port
+    env_file:
+      - .env
     environment:
-      # Spring profiles
-      SPRING_PROFILES_ACTIVE: local
-      
-      # ConfigCat SDK Keys (replace with your actual keys)
-      CONFIGCAT_USER_MANAGEMENT_SDK_KEY: "PKDVCLf-Hq-h-kCzMp-L7Q/YOUR_USER_MANAGEMENT_SDK_KEY"
-      CONFIGCAT_PAYMENT_SDK_KEY: "PKDVCLf-Hq-h-kCzMp-L7Q/YOUR_PAYMENT_SDK_KEY"
-      
       # JVM Debug options
       JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
       
