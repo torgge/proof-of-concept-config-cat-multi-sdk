@@ -4,7 +4,16 @@
       "Bash(git init:*)",
       "Bash(./gradlew:*)",
       "WebSearch",
-      "WebFetch(domain:configcat.com)"
+      "WebFetch(domain:configcat.com)",
+      "Bash(docker-compose up:*)",
+      "Bash(docker-compose:*)",
+      "Bash(docker network:*)",
+      "Bash(docker run:*)",
+      "Bash(docker ps:*)",
+      "Read(//private/tmp/**)",
+      "Bash(echo \"       sdk-key: \"\"YOUR_ACTUAL_USER_MANAGEMENT_SDK_KEY\"\"\")",
+      "Bash(echo \"       sdk-key: \"\"YOUR_ACTUAL_PAYMENT_SDK_KEY\"\"\")",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

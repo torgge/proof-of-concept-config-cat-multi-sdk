@@ -7,6 +7,20 @@ spring:
 server:
   port: 8080
 
+# OpenAPI/Swagger Configuration
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operationsSorter: method
+    tagsSorter: alpha
+    docExpansion: none
+    defaultModelsExpandDepth: 2
+    defaultModelExpandDepth: 2
+  show-actuator: false
+
 # Logging configuration
 logging:
   level:
@@ -84,8 +98,8 @@ spring:
 configcat:
   log-level: WARN
   user-management:
-    sdk-key: "${CONFIGCAT_USER_MANAGEMENT_SDK_KEY}"
+    sdk-key: "${CONFIGCAT_USER_MANAGEMENT_SDK_KEY:configcat-sdk-1/9gPeCHC2w0-Kjegr_dwvmQ/Cl_ld6JRLk6Ev-wW1S8KDg}"
     poll-interval-seconds: 60
   payment:
-    sdk-key: "${CONFIGCAT_PAYMENT_SDK_KEY}"
+    sdk-key: "${CONFIGCAT_PAYMENT_SDK_KEY:configcat-sdk-1/9gPeCHC2w0-Kjegr_dwvmQ/-X7xzRL9oEuM2PdC4bq0VQ}"
     poll-interval-seconds: 60

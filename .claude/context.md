@@ -432,12 +432,12 @@ FROM gradle:8.5-jdk21-alpine AS builder
 WORKDIR /app
 
 # Cache dependencies (layer caching)
-COPY build.gradle.kts settings.gradle.kts gradle.properties ./
-COPY gradle ./gradle
+COPY ../build.gradle.kts settings.gradle.kts gradle.properties ./
+COPY ../gradle ./gradle
 RUN gradle dependencies --no-daemon
 
 # Build application
-COPY src ./src
+COPY ../src ./src
 RUN gradle build --no-daemon -x test && \
     gradle bootJar --no-daemon
 
