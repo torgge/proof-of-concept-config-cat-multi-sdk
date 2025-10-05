@@ -453,23 +453,101 @@ The application automatically tracks:
 - **Application Health**: http://localhost:8080/actuator/health
 - **ConfigCat Status**: Included in health check responses
 
-### Metrics
-- **Prometheus Metrics**: http://localhost:8080/actuator/prometheus
-- **Grafana Dashboard**: http://localhost:3000 (admin/admin)
+### Metrics & Dashboards
+
+#### Prometheus
+- **Prometheus UI**: http://localhost:9090
+- **Metrics Endpoint**: http://localhost:8080/actuator/prometheus
+- **Scrape Interval**: 15 seconds
+- **Targets**: Application metrics automatically collected
+
+#### Grafana Dashboards
+
+Access Grafana at **http://localhost:3000** (credentials: admin/admin)
+
+**Pre-configured Dashboard: "ConfigCat Demo - Application Metrics"**
+
+The dashboard includes 9 panels with real-time monitoring:
+
+1. **Application Uptime** - Shows how long the application has been running
+2. **Application Status** - UP/DOWN indicator with color coding
+3. **Request Rate** - Real-time requests per second by endpoint
+4. **Average Response Time** - Mean response time across all requests
+5. **JVM Memory Usage** - Heap and non-heap memory utilization
+6. **JVM Threads** - Live, daemon, and peak thread counts
+7. **HTTP Status Codes** - 2xx, 4xx, 5xx responses in the last 5 minutes
+8. **Response Time Percentiles** - p50, p95, p99 latency by endpoint
+9. **Endpoints Summary** - Table view of all endpoints with request counts
+
+**Dashboard Features:**
+- ✅ Auto-refresh every 10 seconds
+- ✅ 15-minute time window (configurable)
+- ✅ Interactive graphs with zoom and pan
+- ✅ Detailed legends with statistics (mean, max, min, sum)
+- ✅ Color-coded thresholds for quick status identification
+
+**Key Metrics Tracked:**
+- HTTP request rates and response times
+- JVM memory (heap/non-heap usage)
+- Thread pool statistics
+- Status code distribution
+- Endpoint-specific performance
+- Application uptime and health
 
 ### Available Endpoints
 - **Application**: http://localhost:8080
 - **Swagger UI**: http://localhost:8080/swagger-ui.html
-- **OpenAPI Spec**: http://localhost:8080/api-docs
+- **OpenAPI Spec**: http://localhost:8080/v3/api-docs
 - **Health Check**: http://localhost:8080/actuator/health
-- **Metrics**: http://localhost:8080/actuator/prometheus
+- **Prometheus Metrics**: http://localhost:8080/actuator/prometheus
+- **Prometheus UI**: http://localhost:9090
+- **Grafana Dashboards**: http://localhost:3000
+
+### Quick Monitoring Guide
+
+**After starting services with `./test-api.sh` or `docker-compose up -d`:**
+
+1. **Check Application Health:**
+   ```bash
+   curl http://localhost:8080/actuator/health
+   ```
+
+2. **Access Grafana Dashboard:**
+   - Open http://localhost:3000
+   - Login with `admin` / `admin`
+   - Navigate to "ConfigCat Demo - Application Metrics" dashboard
+   - Dashboard auto-refreshes every 10 seconds
+
+3. **View Raw Metrics in Prometheus:**
+   - Open http://localhost:9090
+   - Search for metrics like:
+     - `http_server_requests_seconds_count`
+     - `jvm_memory_used_bytes`
+     - `process_uptime_seconds`
+
+4. **Monitor Specific Endpoints:**
+   - Use Grafana's "Endpoints Summary" panel
+   - Filter by URI, method, or status code
+   - View response time percentiles
 
 ### Common Metrics
-- Feature flag evaluation counts
-- Feature flag evaluation duration
-- Feature flag evaluation errors
-- HTTP request metrics
-- JVM metrics
+
+**Application Metrics:**
+- `process_uptime_seconds` - Application uptime
+- `http_server_requests_seconds_count` - Total HTTP requests
+- `http_server_requests_seconds_sum` - Total request duration
+- `http_server_requests_seconds_max` - Maximum request duration
+
+**JVM Metrics:**
+- `jvm_memory_used_bytes` - JVM memory usage
+- `jvm_memory_max_bytes` - Maximum JVM memory
+- `jvm_threads_live_threads` - Current thread count
+- `jvm_gc_pause_seconds` - Garbage collection pause time
+
+**Custom Metrics:**
+- Feature flag evaluation counts (via MDC logging)
+- ConfigCat API call rates
+- Request correlation tracking
 
 ## Code Quality
 
